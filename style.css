@@ -33,8 +33,9 @@ body {
 
 .display {
     height: 50%;
-    margin: 0;
+    margin-top: 45px;
     padding-top: 25px;
+    padding-right: 2px;
 }
 
 .keywrapper {

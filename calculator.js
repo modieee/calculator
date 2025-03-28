@@ -1,38 +1,96 @@
-const keys = document.querySelectorAll('.num-key');
-const operator = document.querySelector('.operator')
-const displayOne = document.querySelector('.display-1');
-const displayTwo = document.querySelector('.display-2');
-// const clearBtn = document.querySelector('.clr');
+let display = document.querySelector('.display')
 
-let expression = "";
+let firstNumber = "", secondNumber = "", operator = "", result = null;
+
+function add(a, b) {
+    return a + b;
+}
+function subtract(a, b) {
+    return a - b;
+}
+function multiply(a, b) {
+    return a * b;
+}
+function divide(a, b) {
+    return a / b;
+}
+
+function operate(firstNumber, secondNumber, operator) {
+    if(!firstNumber || !secondNumber || !operator) return;
+    
+    let num1 = parseFloat(firstNumber);
+    let num2 = parseFloat(secondNumber);
+
+    switch (operator) {
+        case '+':
+            result = add(num1, num2)
+        break;
+
+        case '-':
+            result = subtract(num1, num2)
+        break;
+
+        case '*':
+            result = multiply(num1, num2)
+        break;
+
+        case '/':
+            result = divide(num1, num2)
+        break;
+    }
+    result = Math.round(result * 1000) / 1000;
+    result = result.toString();
+    updateDisplay(result)
+}
+
+function updateDisplay(value) {
+    display.textContent = value;
+}
+
+function numberClick(value) {
+    if(!operator) {
+        firstNumber += value
+        updateDisplay(firstNumber);
+    } else if (operator) {
+        secondNumber += value
+        updateDisplay(secondNumber)
+    }
+
+    // if (firstNumber && secondNumber) operate(firstNumber, secondNumber, operator);
+}
+
+function operatorClick(value) {
+    if(!firstNumber) return;
+    if(secondNumber) {
+        operate(firstNumber, secondNumber, operator)
+        firstNumber = result.toString();
+        secondNumber= ""
+    }
+    operator = value;
+}
 
 function clear() {
-    displayOne.innerText = "";
-    displayTwo.innerText = "";
-    expression = "";
-}
-function del() {
-    expression = expression.slice(0, -1);
-    displayTwo.innerText = expression;
+    firstNumber = "";
+    secondNumber = "";
+    operator = "";
+    result = null;
+    updateDisplay("");
 }
 
-function displayOperation (e) {
-    if (e.target.innerText === '.') {
-        if(expression !== "" && !expression.includes(".")) {
-            expression += ".";
-        }
-    } else {
-        expression += e.target.innerText;
-    }
-    displayTwo.innerText = expression;
-}
-
-keys.forEach(key => {
-    key.addEventListener('click', displayOperation)
+document.querySelectorAll('.num-key').forEach(key =>{
+    key.addEventListener('click', (e)=> {
+        numberClick(e.target.innerText);
+    });
+});
+document.querySelectorAll('.operator').forEach(key =>{
+    key.addEventListener('click', (e)=> {
+        operatorClick(e.target.innerText);
+    });
 });
 
-document.addEventListener('click', (e) => {
-    if(e.target.matches('.clr')) clear();
-    if(e.target.matches('.del')) del();
-})
+document.querySelector('.equals').addEventListener('click', () => {
+    operate(firstNumber, secondNumber, operator);
+});
+
+document.querySelector('.clr').addEventListener('click', clear);
 
