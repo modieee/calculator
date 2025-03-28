@@ -40,7 +40,7 @@ function operate(firstNumber, secondNumber, operator) {
             result = subtract(num1, num2)
         break;
 
-        case '*':
+        case 'x':
             result = multiply(num1, num2)
         break;
 
