@@ -14,6 +14,16 @@ function multiply(a, b) {
 function divide(a, b) {
     return a / b;
 }
+function percentage(a, b) {
+    let temp = "";
+    if (b > a) {
+        temp = a;
+        a = b;
+        b = temp
+    }
+
+    return (b / 100) * a;
+}
 
 function operate(firstNumber, secondNumber, operator) {
     if(!firstNumber || !secondNumber || !operator) return;
@@ -37,6 +47,10 @@ function operate(firstNumber, secondNumber, operator) {
         case '/':
             result = divide(num1, num2)
         break;
+
+        case '%':
+            result = percentage(num1, num2)
+        break;
     }
     result = Math.round(result * 1000) / 1000;
     result = result.toString();
@@ -49,14 +63,28 @@ function updateDisplay(value) {
 
 function numberClick(value) {
     if(!operator) {
-        firstNumber += value
+        if(value === '.') {
+            if(!firstNumber) return;
+            else if(firstNumber) {
+                if(!firstNumber.includes('.')) {
+                    firstNumber += value;
+                }
+            }
+        } else firstNumber += value;
+        
         updateDisplay(firstNumber);
-    } else if (operator) {
-        secondNumber += value
+    } 
+    else if (operator) {
+        if(value === '.') {
+            if(!secondNumber) return;
+            else if(secondNumber) {
+                if(!secondNumber.includes('.')) {
+                    secondNumber += value;
+                }
+            }
+        } else secondNumber += value;
         updateDisplay(secondNumber)
     }
-
-    // if (firstNumber && secondNumber) operate(firstNumber, secondNumber, operator);
 }
 
 function operatorClick(value) {
@@ -75,6 +103,10 @@ function clear() {
     operator = "";
     result = null;
     updateDisplay("");
+};
+
+function del() {
+    
 }
 
 document.querySelectorAll('.num-key').forEach(key =>{
