@@ -1,6 +1,6 @@
-let display = document.querySelector('.display')
+const display = document.querySelector('.display')
 
-let firstNumber = "", secondNumber = "", operator = "", result = null;
+let firstNumber = "", secondNumber = "", operator = "", waitingForNewInput = false, result = null;
 
 function add(a, b) {
     return a + b;
@@ -45,16 +45,24 @@ function operate(firstNumber, secondNumber, operator) {
         break;
 
         case '/':
-            result = divide(num1, num2)
+            result = (num1 === 0 || num2 === 0) ? result = '🤣🤣🤣' : divide(num1, num2);
         break;
 
         case '%':
             result = percentage(num1, num2)
         break;
     }
-    result = Math.round(result * 1000) / 1000;
+    if(typeof result === 'number') {
+        result = Math.round(result * 1000) / 1000;
+    };
     result = result.toString();
     updateDisplay(result)
+
+    firstNumber = result;
+    secondNumber = "";
+    operator = "";
+    waitingForNewInput = true;
+
 }
 
 function updateDisplay(value) {
@@ -91,10 +99,11 @@ function operatorClick(value) {
     if(!firstNumber) return;
     if(secondNumber) {
         operate(firstNumber, secondNumber, operator)
-        firstNumber = result.toString();
+        if (waitingForNewInput) firstNumber = result.toString();
         secondNumber= ""
     }
     operator = value;
+    waitingForNewInput = false;
 }
 
 function clear() {
@@ -102,11 +111,18 @@ function clear() {
     secondNumber = "";
     operator = "";
     result = null;
+    waitingForNewInput = false;
     updateDisplay("");
 };
 
 function del() {
-    
+    if(!operator){
+        firstNumber = firstNumber.slice(0, -1);
+        updateDisplay(firstNumber || "")
+    } else if(secondNumber) {
+        secondNumber = secondNumber.slice(0, -1);
+        updateDisplay(secondNumber || "");
+    }
 }
 
 document.querySelectorAll('.num-key').forEach(key =>{
@@ -125,4 +141,6 @@ document.querySelector('.equals').addEventListener('click', () => {
 });
 
 document.querySelector('.clr').addEventListener('click', clear);
-
+document.querySelector('.del').addEventListener('click', () => {
+    del();
+});
